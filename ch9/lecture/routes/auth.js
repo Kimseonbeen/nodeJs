@@ -52,11 +52,11 @@ router.get('/logout', isLoggedIn, (req, res) => {
   res.redirect('/');
 });
 
-router.get('/kakao', passport.authenticate('kakao'));
+router.get('/kakao', passport.authenticate('kakao')); // 1. 실행되면 kakaoStrategy 이동
 
-router.get('/kakao/callback', passport.authenticate('kakao', {
-  failureRedirect: '/',
-}), (req, res) => {
+router.get('/kakao/callback', passport.authenticate('kakao', {  // 2. 카카오 사이트에서 로그인 후 strategy 이동
+  failureRedirect: '/', // 3. kakoStrategy 실패 후 이동 로직
+}), (req, res) => {     // 3. kakoStrategy 성공 후 이동 로직
   res.redirect('/');
 });
 

@@ -1,4 +1,4 @@
-  
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
@@ -11,7 +11,10 @@ const passport = require('passport');
 dotenv.config();
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
+const postRouter = require('./routes/post');
+const userRouter = require('./routes/user');
 const { sequelize } = require('./models');
+const passportConfig = require('./passport');
 
 const app = express();
 app.set('port', process.env.PORT || 8001);  //process.env.PORT를 앞에 쓰는 이유는 나중에 배포할때 433 or 80 포트 사용하기 위해
@@ -20,18 +23,20 @@ nunjucks.configure('views', {
   express: app,
   watch: true,
 });
-sequelize.sync({ force : false }) // force : false ... 디비 컬럼 변경 됐을때 처리방법
+sequelize.sync({ force: false }) // force : false ... 디비 컬럼 변경 됐을때 처리방법
   .then(() => {
     console.log('데이터베이스 연결 성공');
   })
   .catch((err) => {
     console.error(err);
   })
+passportConfig();
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/img', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));  // form-data 보낼 시 해석을 해서 req.body에 넣어준다. //이미지 muitipart 경우에는 불가
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
   resave: false,
@@ -47,9 +52,11 @@ app.use(passport.session());
 
 app.use('/', pageRouter);
 app.use('/auth', authRouter);
+app.use('/post', postRouter);
+app.use('/user', userRouter);
 
 app.use((req, res, next) => {
-  const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
+  const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
   error.status = 404;
   next(error);
 });

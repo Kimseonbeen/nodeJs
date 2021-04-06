@@ -1,6 +1,6 @@
 const passport = require('passport');
 const local = require('./localStrategy');
-//const kakao = require('./kakaoStrategy');
+const kakao = require('./kakaoStrategy');
 const User = require('../models/user');
 
 module.exports = () => {
@@ -9,7 +9,20 @@ module.exports = () => {
   });
 
   passport.deserializeUser((id, done) => {
-    User.findOne({ where: { id } })
+    User.findOne({
+       where: { id },
+       include : [{
+         model : User,
+         attributes : ['id', 'nick'],
+         as : 'Followers',
+         through : 'Follow',
+       }, {
+         model : User,
+         attributes : ['id', 'nick'],
+         as : 'Followings',
+         through : 'Follow'
+       }],
+      })
       .then(user => done(null, user))   // req.user, req.isAuthenticated();
       .catch(err => done(err));
   });
