@@ -28,6 +28,7 @@ router.get('/', async (req, res, next) => {
       },
       order: [['createdAt', 'DESC']],
     });
+    console.log("posts : ",JSON.stringify(posts));
     res.render('main', {
       title: 'NodeBird',
       twits: posts,
