@@ -1,3 +1,4 @@
+// 다른 언어 사용하기
 const spawn = require('child_process').spawn;
 
 const process = spawn('python', ['test.py']);
