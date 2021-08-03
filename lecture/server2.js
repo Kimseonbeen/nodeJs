@@ -5,7 +5,7 @@ const server = http.createServer(async (req, res) => {
     try {
         res.writeHead(200, { 'Content-Type' : 'text/html; charset=utf-8'})
         const data = await fs.readFile('./server2.html');
-        res.end(data);
+        res.end(data);  // html 파일 읽어 전송을 해줌
     } catch (error) {
         console.error(err);
         res.writeHead(200, {'Content-Type' : 'text/plain; charset=utf-8'});
@@ -16,7 +16,7 @@ const server = http.createServer(async (req, res) => {
 server.on('listening', () => {
     console.log('8080번 포트에서 서버 대기 중입니다.');
 })
-server.on('error', (error) => {
+server.on('error', (error) => { 
     console.error(error);
     console.error(error);
 })

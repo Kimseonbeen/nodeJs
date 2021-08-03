@@ -1,6 +1,10 @@
 const https = require('https');
 const fs = require('fs');
 
+// Sync 써도 되는 경우
+// 딱 한번 실행 하거나
+// 서버를 초기화 할때
+// 서버를 실행하기 전에 인증
 https.createServer({
   cert: fs.readFileSync('도메인 인증서 경로'),
   key: fs.readFileSync('도메인 비밀키 경로'),

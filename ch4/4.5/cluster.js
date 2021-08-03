@@ -1,8 +1,12 @@
+// cluster
+// 기본적으로 싱글 스레드인 노드가 CPU 코어를 모두 사용할 수 있게 해주는 모듈
+
 const cluster = require('cluster');
 const http = require('http');
 const numCPUs = require('os').cpus().length;
 
 if (cluster.isMaster) {
+  // 고르게 워커쓰레드에 일을 정해주는 역할
   console.log(`마스터 프로세스 아이디: ${process.pid}`);
   // CPU 개수만큼 워커를 생산
   for (let i = 0; i < numCPUs; i += 1) {
@@ -12,6 +16,8 @@ if (cluster.isMaster) {
   cluster.on('exit', (worker, code, signal) => {
     console.log(`${worker.process.pid}번 워커가 종료되었습니다.`);
     console.log('code', code, 'signal', signal);
+    // 워커프로세스가 종료 되었을 때
+    // 다시 하나 실행 시켜주는 역할
     cluster.fork();
   });
 } else {

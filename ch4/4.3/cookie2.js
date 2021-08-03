@@ -20,6 +20,7 @@ http.createServer(async (req, res) => {
     const { name } = qs.parse(query);   // 김선빈
     const expires = new Date();
     // 쿠키 유효 시간을 현재시간 + 5분으로 설정
+    // Expire 설정을 안 하게되면 세션쿠키 (브라우저 종료시 만료)
     expires.setMinutes(expires.getMinutes() + 5);
     res.writeHead(302, {    //302 redirect
       Location: '/',
