@@ -13,6 +13,7 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
     if (exUser) {
       return res.redirect('/join?error=exist');
     }
+    // hash 인자의 숫자가 더 높을 수록 더 복잡하게 해쉬화함
     const hash = await bcrypt.hash(password, 12);
     await User.create({
       email,
@@ -26,6 +27,14 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
   }
 });
 
+// 미들웨어 확장법 사용
+// isNotLoggedIn 미들웨어 없다는 전제 하
+// 1. /login 요청이 들어왔을 때
+// 2. passport.authenticate('local')이 실행된다.
+// 3. passport가 local을 찾아 localstrategy 이동 (index.js에 등록)
+// 4. localstrategy가 실행됨
+// 5. done() 호출 되어 (authError, user, info) 실행 done이란 인자값 메칭
+// 6. 성공 시 req.login() 실행 req.login() => index.js serializeUser이동
 router.post('/login', isNotLoggedIn, (req, res, next) => {
   passport.authenticate('local', (authError, user, info) => {
     if (authError) {
@@ -40,6 +49,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
         console.error(loginError);
         return next(loginError);
       }
+      // 성공 시 로직
       // 세션 쿠키를 브라우저로 보내준다.
       return res.redirect('/');
     });
@@ -47,6 +57,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
 });
 
 router.get('/logout', isLoggedIn, (req, res) => {
+  // req.logout() : 세션 쿠키가 사라짐
   req.logout();
   req.session.destroy();
   res.redirect('/');

@@ -23,6 +23,9 @@ module.exports = class Comment extends Sequelize.Model {
     });
   }
 
+  // belongsTo = 속해있다.
+  // comment는 user에 속해 있다.
+  // commnenter column은 belongsTo 있는 곳에 추가
   static associate(db) {
     db.Comment.belongsTo(db.User, { foreignKey: 'commenter', targetKey: 'id' });    // belongsTo 있는부분에 commenter 추가 됨
   }

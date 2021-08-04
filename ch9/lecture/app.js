@@ -1,4 +1,5 @@
-
+// 초기 설정 시 
+// npx sequlize init 해주기
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
@@ -17,13 +18,19 @@ const { sequelize } = require('./models');
 const passportConfig = require('./passport');
 
 const app = express();
+// 개발 포트, 배포 포트 다르게 사용하기 위함
 app.set('port', process.env.PORT || 8001);  //process.env.PORT를 앞에 쓰는 이유는 나중에 배포할때 433 or 80 포트 사용하기 위해
 app.set('view engine', 'html');
 nunjucks.configure('views', {
   express: app,
   watch: true,
 });
-sequelize.sync({ force: false }) // force : false ... 디비 컬럼 변경 됐을때 처리방법
+// force : true = 테이블을 삭제하고 다시 만듦
+// 이럴경우 기존 데이터가 모두 날라감
+// alter : true = 노드에서 테이블을 수정하면 그걸 인식하여 mysql 테이블 수정
+// alter : true는 에러가 나는 경우가 많음
+// force : false 기본적
+sequelize.sync({ force: false }) 
   .then(() => {
     console.log('데이터베이스 연결 성공');
   })
@@ -61,7 +68,10 @@ app.use((req, res, next) => {
   next(error);
 });
 
+// 인자 4개
+// next 안 쓰더라도 생략 X
 app.use((err, req, res, next) => {
+  // res.locals = 템플릿 엔진에서 에러 처리 위함
   res.locals.message = err.message;
   res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
   res.status(err.status || 500);
