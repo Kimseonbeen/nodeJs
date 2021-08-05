@@ -15,6 +15,7 @@ const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
 const { sequelize } = require('./models');
+// passport 연결
 const passportConfig = require('./passport');
 
 const app = express();
@@ -54,7 +55,13 @@ app.use(session({
     secure: false,
   },
 }));
+// 로그인 한 뒤 그 다음 요청 보낼 때
+// 미들웨어 두개를 미리 연결
+// 얘내 둘은 app.use(session) 보내 밑에 위치 해야한다.
 app.use(passport.initialize());
+// 로그인 후 그 다음 요청 부터 passport.session() 실행 될 때
+// passport.session()이 아이디를 알아내고 passport.deserializeUser(id) 전달
+// passport.deserializeUser()이 실행된다.
 app.use(passport.session());
 
 app.use('/', pageRouter);

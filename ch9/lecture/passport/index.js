@@ -11,6 +11,9 @@ module.exports = () => {
     done(null, user.id);    // 세션에 user의 id만 저장
   });
 
+  // {id : 3, 'connect.sid' : s$231512315313 }
+
+  // 여기서 req.user 나오는거야
   passport.deserializeUser((id, done) => {
     User.findOne({
        where: { id },
@@ -26,7 +29,8 @@ module.exports = () => {
          through : 'Follow'
        }],
       })
-      .then(user => done(null, user))   // req.user, req.isAuthenticated();
+      // req.user, req.isAuthenticated();
+      .then(user => done(null, user))   
       .catch(err => done(err));
   });
 

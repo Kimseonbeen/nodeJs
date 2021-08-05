@@ -3,8 +3,11 @@ const { Post, User, Hashtag } = require('../models');
 
 const router = express.Router();
 
+//모든 라우터에서 공통 부분은 위에서 빼서 밑의 라우터에서 render 보내지 않고 사용할 수 있음 !!
+// router.user 하면 get, post, put 라우터 모두 적용 됨
+// res.locals 하면 .user로만 템플릿엔진에서 사용가능하다?
 router.use((req, res, next) => {
-  res.locals.user = req.user;         //모든 라우터에서 공통 부분은 위에서 빼서 밑의 라우터에서 render 보내지 않고 사용할 수 있음
+  res.locals.user = req.user;         
   res.locals.followerCount = req.user ? req.user.Followers.length : 0;
   res.locals.followingCount = req.user ? req.user.Followings.length : 0;
   res.locals.followingIdList = req.user ? req.user.Followings.map(f => f.id) : [];
