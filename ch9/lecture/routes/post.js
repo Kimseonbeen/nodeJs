@@ -43,6 +43,7 @@ router.post('/img', isLoggedIn, upload.single('img'), (req, res) => {
 // upload.none() : 이미지, 동영상 업로드는 이미 했으므로 none() 사용
 // bodyparser는 webkitFormboundary를 해석하지 못함 그래서 multer 사용
 router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
+    console.log("req : ", req.body);
     try {
         const post = await Post.create({
             content: req.body.content,
@@ -65,9 +66,13 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
                     })
                 })
             );
+            // [[해시태그, true], [해시태그, true]] 결과값
+            // true시 create 된거
             console.log(result);
             // belongsToMany이니 복수 사용
-            await post.addHashtags(result.map(r => r[0]));
+            // PostHashtag 테이블 데이터 생성
+            const a = await post.addHashtags(result.map(r => r[0]));
+            console.log("-----------------------------------------------");
         }
 
         res.redirect('/');
@@ -76,5 +81,23 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
         next(error);
     }
 });
+// 글 삭제
+// 와일드 카드는 req.params로 사용
+router.delete('/:postId', isLoggedIn, async (req, res, next) => {
+    try {
+      console.log("req.body : ", req.params);
+      const post = await Post.findOne({ where : { id : req.params.postId }});
+      console.log("post : ", JSON.stringify(post));
+      if(post) {
+          await Post.destroy({ where : { id : post.id }});
+          res.send('success');
+      } else {
+        res.status(404).send('no post');
+      }
+    } catch(error) {
+        console.error(error);
+        next(error);
+    }
+  })
 
 module.exports = router;

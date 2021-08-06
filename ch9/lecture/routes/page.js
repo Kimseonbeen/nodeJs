@@ -5,8 +5,10 @@ const router = express.Router();
 
 //모든 라우터에서 공통 부분은 위에서 빼서 밑의 라우터에서 render 보내지 않고 사용할 수 있음 !!
 // router.user 하면 get, post, put 라우터 모두 적용 됨
-// res.locals 하면 .user로만 템플릿엔진에서 사용가능하다?
+// res.locals 하면 .user로만 템플릿엔진에서 사용가능하다? 맞음
+// res.locals 사용하면 전역에서 사용 가능한 변수를 만드는것
 router.use((req, res, next) => {
+  console.log(" req.user!!!! : ", JSON.stringify(req.user));
   res.locals.user = req.user;         
   res.locals.followerCount = req.user ? req.user.Followers.length : 0;
   res.locals.followingCount = req.user ? req.user.Followings.length : 0;
@@ -23,6 +25,7 @@ router.get('/join', (req, res) => {
 });
 
 router.get('/', async (req, res, next) => {
+  console.log("////////////////////////////////////////");
   try {
     const posts = await Post.findAll({
       include: {
@@ -31,7 +34,8 @@ router.get('/', async (req, res, next) => {
       },
       order: [['createdAt', 'DESC']],
     });
-    console.log("posts : ",JSON.stringify(posts));
+    console.log("posts!!!!!!!!!!!!!!!!!!!!!!!!!! : ",JSON.stringify(posts));
+    console.log("userId : ", JSON.stringify(posts.length));
     res.render('main', {
       title: 'NodeBird',
       twits: posts,
@@ -49,11 +53,18 @@ router.get('/hashtag', async (req, res, next) => {
   }
   try {
     const hashtag = await Hashtag.findOne({ where: { title: query } });
+    console.log("hashtag : ", hashtag);
     let posts = [];
     if (hashtag) {
+      // include 해줌으로 게시글의 작성자 까지 다 가져와
+      // 필요한 애들만 atrributes 해줘서 가져오기
+      // belongsToMany므로 hashtag.getPosts 통해 해시태그 게시물 가져오기 
+      // 게시물의 데이터 가져오는거
+      // findOne 한 객체를 hashtag.getPosts 사용할수있나바
       posts = await hashtag.getPosts({ include: [{ model: User, attributes : ['id', 'nick'] }] });
+      console.log("posts : ",posts);
     }
-
+    // 'main' = main.html
     return res.render('main', {
       title: `#${query} 검색 결과 | NodeBird`,
       twits: posts,

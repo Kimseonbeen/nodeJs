@@ -1,3 +1,6 @@
+// API 서버와 nodecat이 통신 할 수있는 라우터
+
+
 const express = require('express');
 const jwt = require('jsonwebtoken');
 

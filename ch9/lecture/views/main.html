@@ -37,6 +37,9 @@
             {% if twit.img %}
               <div class="twit-img"><img src="{{twit.img}}" alt="섬네일"></div>
             {% endif %}
+            {% if user.id and twit.User.id !== user.id %}
+              <button class="delete-post">삭제하기</button>
+            {% endif %}
           </div>
         {% endfor %}
       </div>
@@ -45,6 +48,7 @@
 
 {% block script %}
   <script>
+    
     if (document.getElementById('img')) {
       document.getElementById('img').addEventListener('change', function(e) {
         const formData = new FormData();
@@ -52,6 +56,9 @@
         formData.append('img', this.files[0]);
         axios.post('/post/img', formData)
           .then((res) => {
+            // console.log("res.data !!!", res.data);
+            // {url: "/img/p208011628216611277.png"}
+            // form 보내기전 속성에 값 넣기
             document.getElementById('img-url').value = res.data.url;
             document.getElementById('img-preview').src = res.data.url;
             document.getElementById('img-preview').style.display = 'inline';
@@ -78,6 +85,24 @@
             }
           }
         }
+      });
+    });
+    document.querySelectorAll('.delete-post').forEach(function(tag) {
+      tag.addEventListener('click', function() {
+        if(confirm('정말로 삭제 하시겠습니까?')) {
+          const postId = tag.parentNode.querySelector('.twit-id').value;
+          console.log("postId : ", postId);
+          axios.delete(`/post/${postId}`)
+          .then(() => {
+            location.reload();
+            console.log("success");
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+        }
+        
+        
       });
     });
   </script>

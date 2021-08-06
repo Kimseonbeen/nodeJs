@@ -8,10 +8,13 @@ module.exports = class Domain extends Sequelize.Model {
         allowNull: false,
       },
       type: {
+        // ENUM 'free', 'premium'만 사용 할 수있다.
         type: Sequelize.ENUM('free', 'premium'),
         allowNull: false,
       },
+      // REST API KEY
       clientSecret: {
+        // type을 STRING해도되지만 UUID로 하면 버전까지 확인가능
         type: Sequelize.UUID,
         allowNull: false,
       },

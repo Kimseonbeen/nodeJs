@@ -1,3 +1,6 @@
+// API SERVER
+// 메인인 서버와 별도로 api 제작
+// api 과부화가 걸려 터져버릴경우 메인서버는 관계없게
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
