@@ -9,6 +9,7 @@ const { Domain, User, Post, Hashtag } = require('../models');
 
 const router = express.Router();
 
+// 밑의 공통적으로 적용 되는 미들웨어는 위로 빼자
 router.use(deprecated); // 밑의 라우터 부분에 모두 사용이 된다면 위로 빼도 됌
 
 router.post('/token', async (req, res) => {

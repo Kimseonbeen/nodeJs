@@ -12,21 +12,25 @@ const router = express.Router();
 // 다른 방법으로는 proxy서버를 둬서 중간 다리 역할을 하게 한다.
 
 
-router.use(cors(async (req, res, next) => {     // 미들웨어 확장 패턴
+router.use(async (req, res, next) => {     // 미들웨어 확장 패턴
+  console.log("dasdasdasds");
   const domain = await Domain.findOne({
     where : { host: url.parse(req.get('origin'))?.host }  // nodecat에 orgin 설정부분 :4000 // ?. = undefinded 가 아니면 객체에서 host를 가져오는 연산자
   });
+  console.log("domain : ", domain);
   if(domain) {
-    cors({
+    console.log("if else");
+    cors({    //미들웨어 확장 패턴 = 검사를 할 수 있다.
       origin: true,
       credentials: true,
     })(req, res, next);
   } else {
     next();
   }
-}));
+});
 
 router.post('/token', apiLimiter, async (req, res) => {
+  console.log("token !");
   const { clientSecret } = req.body;
   console.log("clientSecret : ",clientSecret);
   try {
@@ -52,6 +56,8 @@ router.post('/token', apiLimiter, async (req, res) => {
       expiresIn: '1m', // 1분
       issuer: 'nodebird',
     });
+    // cors 오류 해결 방법
+    // 하지만 이렇게 만들 시 활용성이 떨어진다.
     //res.setHeader('Access-Control-Allow-Origin', 'localhost:4000');
     //res.setHeader('Access-Control-Allow-Credentials', 'true');
     return res.json({
@@ -91,6 +97,9 @@ router.get('/posts/my', verifyToken, apiLimiter, (req, res) => {
 });
 
 router.get('/posts/hashtag/:title', verifyToken, apiLimiter, async (req, res) => {
+  console.log("wwwwwww");
+  console.log("wwwwwww");
+  console.log("wwwwwww");
   try {
     const hashtag = await Hashtag.findOne({ where: { title: req.params.title } });
     if (!hashtag) {

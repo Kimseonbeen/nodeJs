@@ -34,19 +34,21 @@ exports.verifyToken = (req, res, next) => {
     });
   }
 };
-
+// 리미트 체크
 exports.apiLimiter = new RateLimit({
   windowMs: 60 * 1000, // 1분
   max: 10,
   delayMs: 0,
   handler(req, res) {
     res.status(this.statusCode).json({
-      code: this.statusCode, // 기본값 429
+      code: this.statusCode, // 기본값 429 : 할당량이 넘었다
       message: '1분에 한 번만 요청할 수 있습니다.',
     });
   },
 });
 
+// 더 이상 이 api 사용하지말라
+// 업데이트 버전 체크
 exports.deprecated = (req, res) => {
   res.status(410).json({
     code : 410,

@@ -30,6 +30,7 @@ const request = async (req, api) => {
 
 router.get('/mypost', async (req, res, next) => {
     try {
+      // 요청을 보낼 땐 await request : 서버에서 서버로
       const result = await request(req, '/posts/my');
       res.json(result.data);
     } catch (error) {
@@ -39,6 +40,7 @@ router.get('/mypost', async (req, res, next) => {
   });
   
   router.get('/search/:hashtag', async (req, res, next) => {
+    console.log("dsadaddadas");
     try {
       const result = await request(
         req, `/posts/hashtag/${encodeURIComponent(req.params.hashtag)}`,
@@ -53,7 +55,14 @@ router.get('/mypost', async (req, res, next) => {
   });
 
   router.get('/', (req, res) => {
+    // 사실 시크릿키는 뷰에 보내지면 안되므로
+    // restapikey와 javascript 키를 분리하여 둘 다 제공해주어야함
     res.render('main', { key: process.env.CLIENT_SECRET })
   })
+
+  // cors error
+  // cors 에러는 브라우저에서 서버로 요청을 보낼 때만 에러가 발생
+  // 브라우저에서 서버로 요청을 보냈는데 도메인이 다를 때
+  // 포트가 달라도 cors 에러남
 
 module.exports = router;
