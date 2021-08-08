@@ -68,6 +68,8 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-app.listen(app.get('port'), () => {
-  console.log(app.get('port'), '번 포트에서 대기중');
-});
+// listen 사용하지 않고
+// listen 있으면 실제로 돌아가므로
+// server.js로 이동
+// app 분리
+module.exports = app;
