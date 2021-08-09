@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GIF 채팅방</title>
+</head>
+<body>
+<div>F12를 눌러 console 탭과 network 탭을 확인하세요.</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  // network 보게 되면 먼저 폴링해보고 웹소켓 가능하면
+  // status 101 웹소켓으로 업그레이드
+  // but, transports 사용하면 폴링하지않고 바로 웹소켓 
+  const socket = io.connect('http://localhost:8005', {
+    // socket.js path와 일치 시켜주어야함
+    path: '/socket.io',
+    transports: ['websocket'],
+  });
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('reply', 'Hello Node.JS');
+  });
+</script>
+</body>
+</html>
