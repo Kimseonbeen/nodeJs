@@ -66,8 +66,7 @@ router.post('/good', isLoggedIn, upload.single('img'), async (req, res, next) =>
       price,
     });
     const end = new Date();
-    // 24시간 뒤
-    end.setDate(end.getDate() + 1);
+    end.setDate(end.getDate() + 1); // 24시간 뒤
     schedule.scheduleJob(end, async () => {
       const t = await sequelize.transaction();
       try {
@@ -104,6 +103,7 @@ router.post('/good', isLoggedIn, upload.single('img'), async (req, res, next) =>
 
 router.get('/good/:id', isLoggedIn, async (req, res, next) => {
   try {
+    // await Promise.all 사용시 [] 사용가능
     const [good, auction] = await Promise.all([
       Good.findOne({
         where: { id: req.params.id },
@@ -137,6 +137,7 @@ router.post('/good/:id/bid', isLoggedIn, async (req, res, next) => {
       include: { model: Auction },
       order: [[{ model: Auction }, 'bid', 'DESC']],
     });
+    console.log("good : ", JSON.stringify(good));
     if (good.price >= bid) {
       return res.status(403).send('시작 가격보다 높게 입찰해야 합니다.');
     }
